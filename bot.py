@@ -8,7 +8,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import BotCommand, Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # Загрузка переменных окружения
@@ -108,12 +108,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Проверка: бот отвечает «ок»."""
-    logger.info("Получена команда /ping")
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Обработчик команды /help."""
     msg = update.effective_message
-    if msg:
-        await msg.reply_text("ок")
+    if not msg:
+        return
+    await msg.reply_text(
+        "<b>Как пользоваться ботом:</b>\n\n"
+        "Просто отправь число BPM (темп), например: <code>120</code> или <code>140</code>\n\n"
+        "Бот вернёт таблицу длительностей нот в миллисекундах:\n"
+        "• Основные (четверть, восьмая, 16-я, 32-я, целая, половинная)\n"
+        "• Триоли\n"
+        "• Пунктирные (dotted)\n\n"
+        "<b>Команды:</b>\n"
+        "/start — начать работу\n"
+        "/help — эта справка",
+        parse_mode="HTML"
+    )
 
 
 async def handle_bpm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -162,11 +173,18 @@ def main() -> None:
     )
 
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("ping", ping))
+    application.add_handler(CommandHandler("help", help_command))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_bpm))
     application.add_error_handler(error_handler)
 
     async def post_init(app: Application) -> None:
+        # Регистрируем меню команд
+        commands = [
+            BotCommand("start", "Начать работу"),
+            BotCommand("help", "Справка по боту"),
+        ]
+        await app.bot.set_my_commands(commands)
+        
         bot_info = await app.bot.get_me()
         print(f"Подключено к Telegram: @{bot_info.username}")
 
