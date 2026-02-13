@@ -161,8 +161,8 @@ def format_response(bpm: int, d: dict[str, float], lfo: dict[str, float]) -> str
         f"├ ♪ Восьмая (1/8): <b>{round(d['eighth'])}</b> мс\n"
         f"├ ♬ 16-я (1/16): <b>{round(d['sixteenth'])}</b> мс\n"
         f"├ ♬ 32-я (1/32): <b>{round(d['thirty_second'])}</b> мс\n"
-        f"├ ◐ Половинная (1/2): <b>{round(d['half'])}</b> мс\n"
-        f"└ ○ Целая (1/1): <b>{round(d['whole'])}</b> мс\n\n"
+        f"├ Половинная (1/2): <b>{round(d['half'])}</b> мс\n"
+        f"└ Целая (1/1): <b>{round(d['whole'])}</b> мс\n\n"
         
         f"🎹 <b>Триоли:</b>\n"
         f"┌ Четвертная: <b>{round(d['quarter_triplet'])}</b> мс\n"
